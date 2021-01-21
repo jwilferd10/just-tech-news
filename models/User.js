@@ -4,7 +4,14 @@ const sequelize = require('../config/connection');
 
 // This Model class is what we create our own models from using the extends keyword so User inherits all of the functionality the Model class has.
 // create our User model
-class User extends Model {}
+class User extends Model {
+  // The .compareSync() method, which is inside the .checkPassword() method, can then confirm or deny that the supplied password matches the hashed password stored on the object. 
+  // .checkPassword() will then return true on success or false on failure. We'll store that boolean value to the variable validPassword.
+  // set up method to run on instance data (per user) to check password
+  checkPassword(loginPw) {
+    return bcrypt.compareSync(loginPw, this.password);
+  }
+}
 
 // Once we create the User class, we use the .init() method to initialize the model's data and configuration, passing in two objects as arguments.
 // The first object will define the columns and data types for those columns. The second object it accepts configures certain options for the table.
