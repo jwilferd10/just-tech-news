@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const sequelize = require('../../config/connection');
-const { Post, User, Vote } = require('../../models');
+const { Post, User, Comment, Vote } = require('../../models');
 
 // In a query to the post table, we would like to retrieve not only information about each post, but also the user that posted it. 
 // With the foreign key, user_id, we can form a JOIN, an essential characteristic of the relational data model.
@@ -19,6 +19,14 @@ router.get('/', (req, res) => {
         ],
         order: [['created_at', 'DESC']],
         include: [
+            {
+                model: Comment,
+                attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                include: {
+                    model: User,
+                    attributes: ['username']
+                }
+            }, 
             {
                 model: User,
                 attributes: ['username']
@@ -48,12 +56,20 @@ router.get('/:id', (req, res) => {
             [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
         ],
         include: [
-          {
-            model: User,
-            attributes: ['username']
-          }
+            {
+              model: Comment,
+              attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+              include: {
+                model: User,
+                attributes: ['username']
+              }
+            },
+            {
+              model: User,
+              attributes: ['username']
+            }
         ]
-      })
+    })
     .then(dbPostData => {
         if (!dbPostData) {
             res.status(404).json({ message: 'No post found with this id' });
