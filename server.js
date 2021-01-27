@@ -1,21 +1,50 @@
+const path = require('path');
 const express = require('express');
-const routes = require('./routes');
-const sequelize = require('./config/connection');
+const exphbs = require('express-handlebars');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+const sequelize = require('./config/connection');
+
+const hbs = exphbs.create({});
+
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// turn on routes
-app.use(routes);
+app.use(require('./controllers/'));
 
-// The other thing to notice is the use of {force: false} in the .sync() method. This doesn't have to be included, but if it were set to true, it would drop and re-create all of the database tables on startup.
-// If we change the value of the force property to true, then the database connection must sync with the model definitions and associations. 
-// By forcing the sync method to true, we will make the tables re-create if there are any association changes.
-// Turn on connection to db and server
 sequelize.sync({ force: false }).then(() => {
-    app.listen(PORT, () => console.log('Now listening'));
+  app.listen(PORT, () => console.log('Now listening'));
 });
+
+// const express = require('express');
+// const routes = require('./controllers/');
+// const sequelize = require('./config/connection');
+// const path = require('path');
+
+// const app = express();
+// const PORT = process.env.PORT || 3001;
+
+// const exphbs = require('express-handlebars');
+// const hbs = exphbs.create({});
+
+// app.engine('handlebars', hbs.engine);
+// app.set('view engine', 'handlebars');
+
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// app.use(express.static(path.join(__dirname, 'public')));
+
+// // turn on routes
+// app.use(routes);
+
+// // Turn on connection to db and server
+// sequelize.sync({ force: false }).then(() => {
+//     app.listen(PORT, () => console.log('Now listening'));
+// });
   
