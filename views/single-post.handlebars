@@ -1,4 +1,5 @@
-<article class="post">
+{{> post-info post}}
+{{!-- <article class="post">
   <div class="title">
     <a href="{{post.post_url}}" target="_blank">{{post.title}}</a>
     <span>({{post.post_url}})</span>
@@ -9,7 +10,7 @@
     |
     <a href="/post/{{post.id}}">{{post.comments.length}} comment(s)</a>
   </div>
-</article>
+</article> --}}
 
 {{#if loggedIn}}
 <form class="comment-form">
@@ -24,7 +25,8 @@
 </form>
 {{/if}}
 
-<div class="comments">
+{{> comments post.comments}}
+{{!-- <div class="comments">
   {{#each post.comments}}
   <section class="comment">
     <div class="meta">
@@ -35,7 +37,7 @@
     </div>
   </section>
   {{/each}}
-</div>
+</div> --}}
 {{#if loggedIn}}
 <script src="/javascript/comment.js"></script>
 <script src="/javascript/upvote.js"></script>
